@@ -200,6 +200,8 @@ def _inference_single_pose_model(model,
             flip_pairs = [[1, 2], [6, 18], [7, 19], [8, 20], [9, 21], [10, 22],
                           [11, 23], [12, 24], [13, 25], [14, 26], [15, 27],
                           [16, 28], [17, 29], [30, 31]]
+        elif dataset in 'AnimalFishDataset':
+            flip_pairs = []
         elif dataset in 'AnimalHorse10Dataset':
             flip_pairs = []
 
@@ -753,6 +755,14 @@ def vis_pose_result(model,
 
             pose_link_color = palette[[0] * 25]
             pose_kpt_color = palette[[0] * 32]
+        
+        elif dataset == 'AnimalFishDataset':
+            skeleton = [[0, 1], [0, 2], [1, 2], [1, 3], [2, 5], [3, 4], [3, 6],
+                        [3, 7], [4, 7], [4, 8], [4, 9], [5, 6], [6, 7], [7, 8],
+                        [7, 9], [8, 9]]
+
+            pose_link_color = palette[[0] * 16]
+            pose_kpt_color = palette[[0] * 10]
 
         elif dataset == 'AnimalLocustDataset':
             skeleton = [[1, 0], [2, 1], [3, 2], [4, 3], [6, 5], [7, 6], [9, 8],
