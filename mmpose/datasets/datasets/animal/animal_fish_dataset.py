@@ -79,7 +79,7 @@ class AnimalFishDataset(Kpt2dSviewRgbImgTopDownDataset):
                 joints_3d_visible[:, :2] = np.minimum(1, keypoints[:, 2:3])
 
                 # use the entire image which is 192x192
-                bbox = np.array([0, 0, 192, 192], dtype=np.float32)
+                bbox = np.array(obj["bbox"], dtype=np.float32)
 
                 image_file = osp.join(self.img_prefix, self.id2name[img_id])
 

@@ -11,7 +11,7 @@ from mmcv.cnn import fuse_conv_bn
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
 from mmcv.runner import get_dist_info, init_dist, load_checkpoint
 
-from mmpose.apis import multi_gpu_test, single_gpu_test
+from mmpose.apis import multi_gpu_test, single_gpu_test, vis_pose_result
 from mmpose.datasets import build_dataloader, build_dataset
 from mmpose.models import build_posenet
 from mmpose.utils import setup_multi_processes
@@ -82,6 +82,24 @@ def merge_configs(cfg1, cfg2):
         if v:
             cfg1[k] = v
     return cfg1
+
+
+def visualize_and_save(model, dataset, results, work_dir, vis_cfg):
+    for r_dict in results:
+        for img, keypoints, bbox, label in zip(
+            r_dict["image_paths"], r_dict["preds"], 
+            r_dict["boxes"], r_dict["bbox_ids"]
+        ):
+            results = [{
+                "keypoints": keypoints,
+                "bbox": bbox,
+                "label": str(label),
+            }]
+            image = vis_pose_result(model, img, results, dataset=dataset,
+                **vis_cfg
+            )
+            mmcv.imwrite(image, 
+                         os.path.join(work_dir, "vis", os.path.basename(img)))
 
 
 def main():
@@ -174,6 +192,11 @@ def main():
         if args.out:
             print(f'\nwriting results to {args.out}')
             mmcv.dump(outputs, args.out)
+
+        if cfg.get('visualize', False):
+            vis_cfg = cfg.get('vis_config', {})
+            visualize_and_save(model, dataset.__class__.__name__, outputs, 
+                               cfg.work_dir, vis_cfg)
 
         results = dataset.evaluate(outputs, cfg.work_dir, **eval_config)
         for k, v in sorted(results.items()):
