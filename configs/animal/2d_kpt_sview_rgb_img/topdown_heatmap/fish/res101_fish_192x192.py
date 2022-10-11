@@ -129,3 +129,9 @@ data = dict(
         pipeline=test_pipeline,
         dataset_info={{_base_.dataset_info}}),
 )
+
+visualize = True
+vis_config = {
+    "radius": 20,
+    "thickness": 5,
+}
