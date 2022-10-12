@@ -84,7 +84,8 @@ def merge_configs(cfg1, cfg2):
     return cfg1
 
 
-def visualize_and_save(model, dataset, results, work_dir, vis_cfg):
+def visualize_and_save(model, dataset, results, work_dir, ckpt_name, vis_cfg):
+    vis_dir = f"vis_{ckpt_name}"
     for r_dict in results:
         for img, keypoints, bbox, label in zip(
             r_dict["image_paths"], r_dict["preds"], 
@@ -95,11 +96,10 @@ def visualize_and_save(model, dataset, results, work_dir, vis_cfg):
                 "bbox": bbox,
                 "label": str(label),
             }]
-            image = vis_pose_result(model, img, results, dataset=dataset,
-                **vis_cfg
+            out_file = os.path.join(work_dir, vis_dir, os.path.basename(img))
+            vis_pose_result(model, img, results, dataset=dataset,
+                out_file=out_file, **vis_cfg
             )
-            mmcv.imwrite(image, 
-                         os.path.join(work_dir, "vis", os.path.basename(img)))
 
 
 def main():
@@ -196,7 +196,8 @@ def main():
         if cfg.get('visualize', False):
             vis_cfg = cfg.get('vis_config', {})
             visualize_and_save(model, dataset.__class__.__name__, outputs, 
-                               cfg.work_dir, vis_cfg)
+                               cfg.work_dir, os.path.basename(args.checkpoint), 
+                               vis_cfg)
 
         results = dataset.evaluate(outputs, cfg.work_dir, **eval_config)
         for k, v in sorted(results.items()):
