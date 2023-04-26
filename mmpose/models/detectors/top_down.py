@@ -284,18 +284,18 @@ class TopDown(BasePose):
                 bbox_labels.append(res.get('label', None))
             pose_result.append(res['keypoints'])
 
-        if bbox_result:
-            bboxes = np.vstack(bbox_result)
-            # draw bounding boxes
-            imshow_bboxes(
-                img,
-                bboxes,
-                labels=bbox_labels,
-                colors=bbox_color,
-                text_color=text_color,
-                thickness=bbox_thickness,
-                font_scale=font_scale,
-                show=False)
+        # if bbox_result:
+        #     bboxes = np.vstack(bbox_result)
+        #     # draw bounding boxes
+        #     imshow_bboxes(
+        #         img,
+        #         bboxes,
+        #         labels=bbox_labels,
+        #         colors=bbox_color,
+        #         text_color=text_color,
+        #         thickness=bbox_thickness,
+        #         font_scale=font_scale,
+        #         show=False)
 
         if pose_result:
             imshow_keypoints(img, pose_result, skeleton, kpt_score_thr,
